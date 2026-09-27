@@ -10,8 +10,8 @@ const iconTile =
 const cornerArrow =
     "absolute right-6 top-6 size-5 -translate-x-1 translate-y-1 opacity-0 transition-[translate,opacity] duration-300 group-data-[state=active]:translate-x-0 group-data-[state=active]:translate-y-0 group-data-[state=active]:opacity-100";
 
-// Closing section: one door for admins (orange), one for invited students.
-export default function FinalCta() {
+// "Pick your door": one door for admins (orange), one for invited students.
+export default function PickYourDoor() {
     const navigate = useNavigate();
     const emailRef = useRef(null);
     const [email, setEmail] = useState("");
@@ -34,7 +34,7 @@ export default function FinalCta() {
     const stateOf = (door) => (active === null ? "idle" : active === door ? "active" : "dimmed");
 
     return (
-        <section className="border-t border-border bg-muted/40 py-16">
+        <section className="border-t border-border py-16">
             <div className="mx-auto max-w-5xl px-6 lg:px-8">
                 <Reveal className="text-center">
                     <h2 className="text-4xl font-black tracking-tight sm:text-5xl">Pick your door.</h2>
