@@ -8,7 +8,7 @@ const tones = {
         activeRing: "ring-brand/60 shadow-brand/20",
     },
     student: {
-        glow: "color-mix(in oklch, var(--student) 9%, transparent)",
+        glow: "color-mix(in oklch, var(--student) 14%, transparent)",
         ring: "ring-student/10",
         activeRing: "ring-student/35 shadow-student/15",
     },
