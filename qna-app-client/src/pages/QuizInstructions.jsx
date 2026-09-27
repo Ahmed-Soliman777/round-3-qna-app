@@ -16,6 +16,10 @@ import { useNow } from "@/hooks/useNow";
 
 import { formatDateTime, formatDuration, quizWindowState } from "@/lib/quizStatus";
 
+import { canAddToCalendar } from "@/lib/calendar";
+
+import AddToCalendar from "@/components/AddToCalendar";
+
 
 export default function QuizInstructions() {
 
@@ -190,6 +194,8 @@ export default function QuizInstructions() {
                   {windowState === "closed" && "The deadline has passed."}
 
                 </p>
+
+                {canAddToCalendar(quiz, now) && <AddToCalendar quiz={quiz} className="mt-3" />}
 
               </div>
 
