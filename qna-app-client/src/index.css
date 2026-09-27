@@ -119,6 +119,9 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   * {
     @apply border-border outline-ring/50;
     }
@@ -146,6 +149,29 @@
 
 .animate-splash-pulse {
     animation: splash-pulse 1.6s ease-in-out infinite;
+}
+
+/* RunnerBorder: the dash offset is inherited by each trail layer, so one animation moves them together. */
+@keyframes runner-lap {
+    from {
+        stroke-dashoffset: 100;
+    }
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.runner-border {
+    stroke-dashoffset: 100;
+    animation: runner-lap 6s linear infinite;
+    filter: drop-shadow(0 0 3px var(--color-orange-500))
+        drop-shadow(0 0 10px color-mix(in oklab, var(--color-orange-500) 45%, transparent));
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .runner-border {
+        animation: none;
+    }
 }
 /* Display & accessibility preferences (see src/context/PreferencesContext.jsx) */
 html[data-reduce-motion] *,

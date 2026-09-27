@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Route, Routes, useLocation } from 'react-router'
 import './App.css'
 import SplashScreen from './components/SplashScreen'
+import { SplashContext } from './context/splash'
 import HomePage from './pages/HomePage'
 import AssessmentsPage from './pages/AssessmentsPage'
 import InterviewsPage from './pages/InterviewsPage'
@@ -30,7 +31,10 @@ import AdminAttempts from './pages/AdminAttempts'
 function App() {
   const location = useLocation()
   const [showSplash, setShowSplash] = useState(true)
+  const [splashFaded, setSplashFaded] = useState(false)
   const isFirstRun = useRef(true)
+  // "Done" only once the fade-out has finished, so animations start in plain view.
+  const splashDone = splashFaded && !showSplash
 
   useEffect(() => {
     if (isFirstRun.current) {
@@ -42,13 +46,14 @@ function App() {
     }
 
     setShowSplash(true)
+    setSplashFaded(false)
     const timeout = setTimeout(() => setShowSplash(false), 700)
     return () => clearTimeout(timeout)
   }, [location.pathname])
 
   return (
-    <>
-      <SplashScreen visible={showSplash} />
+    <SplashContext.Provider value={splashDone}>
+      <SplashScreen visible={showSplash} onFadeEnd={setSplashFaded} />
       <Routes>
         <Route path='/' element={<HomePage />} />
         <Route path='/features/assessments' element={<AssessmentsPage />} />
@@ -78,7 +83,7 @@ function App() {
           <Route path="/quiz/:id/result" element={<QuizResult />} />
         </Route>
       </Routes>
-    </>
+    </SplashContext.Provider>
   )
 }
 
