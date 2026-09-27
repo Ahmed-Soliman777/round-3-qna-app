@@ -1,10 +1,37 @@
 import { Link } from "react-router";
-import { ArrowRight, MailOpen } from "lucide-react";
+import { ArrowRight, MailOpen, Send } from "lucide-react";
+import { useSession } from "@/context/session";
+import { cn } from "@/lib/utils";
 import ExamPreviewCard from "./ExamPreviewCard";
 import InviteChip from "./InviteChip";
 
+const brandButton = "bg-brand text-brand-foreground shadow-md shadow-brand/25 hover:bg-brand-hover";
+
+// Signed-in visitors get buttons for their own role instead of sign-up and sign-in prompts.
+const actionsByRole = {
+    guest: {
+        primary: { to: "/register", label: "Create a quiz, free", className: brandButton },
+        secondary: { to: "/login", label: "I have an invite", icon: MailOpen },
+    },
+    admin: {
+        primary: { to: "/admin-panel/quizzes", label: "Open admin panel", className: brandButton },
+        secondary: { to: "/admin-panel/quizzes", label: "Invite students", icon: Send },
+    },
+    student: {
+        primary: {
+            to: "/dashboard",
+            label: "Go to my quizzes",
+            className: "bg-student text-student-foreground shadow-md shadow-student/25 hover:opacity-90",
+        },
+        secondary: null,
+    },
+};
+
 // "Two doors": orange speaks to admins, the student token speaks to students.
 export default function Hero() {
+    const { user } = useSession();
+    const { primary, secondary } = actionsByRole[user?.role ?? "guest"];
+
     return (
         <section className="mx-auto grid max-w-7xl gap-12 px-6 py-10 lg:grid-cols-2 lg:items-center lg:px-8 lg:py-14">
             <div>
@@ -28,20 +55,27 @@ export default function Hero() {
                 </p>
 
                 <div className="mt-8 flex flex-wrap items-center gap-3">
-                    <Link
-                        to="/register"
-                        className="group flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-brand-foreground shadow-md shadow-brand/25 transition-colors hover:bg-brand-hover"
-                    >
-                        Create a quiz, free
-                        <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-                    </Link>
-                    <Link
-                        to="/login"
-                        className="flex items-center gap-2 rounded-full bg-student-soft px-6 py-3 text-sm font-semibold text-student ring-1 ring-student/10 transition-colors hover:ring-student/30"
-                    >
-                        <MailOpen className="size-4" />
-                        I have an invite
-                    </Link>
+                    {primary && (
+                        <Link
+                            to={primary.to}
+                            className={cn(
+                                "group flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-colors",
+                                primary.className,
+                            )}
+                        >
+                            {primary.label}
+                            <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                        </Link>
+                    )}
+                    {secondary && (
+                        <Link
+                            to={secondary.to}
+                            className="flex items-center gap-2 rounded-full bg-student-soft px-6 py-3 text-sm font-semibold text-student ring-1 ring-student/10 transition-colors hover:ring-student/30"
+                        >
+                            <secondary.icon className="size-4" />
+                            {secondary.label}
+                        </Link>
+                    )}
                 </div>
 
                 <p className="mt-6 text-sm text-muted-foreground">
