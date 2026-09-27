@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import {
     ChevronDown,
@@ -92,20 +92,44 @@ const navItemClass =
     "relative z-10 flex items-center gap-1 rounded-full px-3.5 py-1.5 text-sm text-muted-foreground outline-none transition-colors duration-200 hover:text-orange-600 focus-visible:text-orange-600";
 
 // Desktop nav with a pill that glides to whichever link is hovered or focused.
+// It uses the same orange hover as the dropdown items so the whole menu reads as one surface.
 function PillNav({ children }) {
     const navRef = useRef(null);
-    const [pill, setPill] = useState({ left: 0, width: 0, visible: false, instant: true });
+    const activeRef = useRef(null);
+    const [pill, setPill] = useState({ x: 0, width: 0, visible: false, instant: true });
 
-    const moveTo = (target) => {
-        const el = target.closest("[data-nav-item]");
+    const measure = useCallback((el, instant) => {
         const nav = navRef.current;
-        // Hovering inside an open dropdown keeps the pill on its trigger.
         if (!el || !nav) return;
         const navBox = nav.getBoundingClientRect();
         const box = el.getBoundingClientRect();
-        setPill((prev) => ({ left: box.left - navBox.left, width: box.width, visible: true, instant: !prev.visible }));
+        setPill({ x: box.left - navBox.left, width: box.width, visible: true, instant });
+    }, []);
+
+    const moveTo = (target) => {
+        const el = target.closest("[data-nav-item]");
+        // Hovering inside an open dropdown keeps the pill on its trigger.
+        if (!el || el === activeRef.current) return;
+        // Appear in place when coming from outside; glide when moving between items.
+        const appearing = !activeRef.current;
+        activeRef.current = el;
+        measure(el, appearing);
     };
-    const hide = () => setPill((prev) => ({ ...prev, visible: false }));
+    const hide = () => {
+        activeRef.current = null;
+        setPill((prev) => ({ ...prev, visible: false }));
+    };
+
+    // Keep the pill glued to its item when the layout shifts (resize, font load).
+    useEffect(() => {
+        const nav = navRef.current;
+        if (!nav || typeof ResizeObserver === "undefined") return;
+        const observer = new ResizeObserver(() => {
+            if (activeRef.current) measure(activeRef.current, true);
+        });
+        observer.observe(nav);
+        return () => observer.disconnect();
+    }, [measure]);
 
     return (
         <nav
@@ -120,12 +144,12 @@ function PillNav({ children }) {
         >
             <span
                 aria-hidden="true"
-                style={{ left: pill.left, width: pill.width }}
+                style={{ transform: `translateX(${pill.x}px)`, width: pill.width }}
                 className={cn(
-                    "pointer-events-none absolute top-1/2 h-8 -translate-y-1/2 rounded-full bg-orange-50 ring-1 ring-orange-500/20 dark:bg-orange-500/10",
+                    "pointer-events-none absolute inset-y-0 left-0 my-auto h-8 rounded-full bg-orange-50 will-change-[transform,width] motion-reduce:transition-none dark:bg-orange-500/10",
                     pill.instant
-                        ? "transition-opacity duration-200"
-                        : "transition-[left,width,opacity] duration-[380ms] ease-[cubic-bezier(0.3,0.8,0.25,1)]",
+                        ? "transition-opacity duration-150"
+                        : "transition-[transform,width,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
                     pill.visible ? "opacity-100" : "opacity-0"
                 )}
             />
