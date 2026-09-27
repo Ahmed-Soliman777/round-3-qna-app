@@ -228,7 +228,7 @@ function AuthActions() {
             </Link>
             <Link
                 to="/register"
-                className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/85 transition-colors"
+                className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground hover:bg-brand-hover transition-colors"
             >
                 Start free
             </Link>

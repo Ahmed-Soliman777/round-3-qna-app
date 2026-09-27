@@ -1,19 +1,25 @@
 import { Link } from "react-router";
-import { ArrowRight} from "lucide-react";
+import { ArrowRight, MailOpen } from "lucide-react";
 import ExamPreviewCard from "./ExamPreviewCard";
+import InviteChip from "./InviteChip";
 
-
+// "Two doors": orange speaks to admins, the student token speaks to students.
 export default function Hero() {
     return (
         <section className="mx-auto grid max-w-7xl gap-12 px-6 py-10 lg:grid-cols-2 lg:items-center lg:px-8 lg:py-14">
             <div>
-                <p className="text-sm font-semibold uppercase tracking-wide text-orange-600">
-                    Scheduled assessments, role-gated by default
+                <p className="flex flex-wrap items-center gap-2 text-sm font-semibold uppercase tracking-wide">
+                    <span className="text-brand">For admins</span>
+                    <span className="text-muted-foreground/60" aria-hidden="true">/</span>
+                    <span className="text-student">For students</span>
                 </p>
                 <h1 className="mt-4 text-5xl font-black leading-[1.05] tracking-tight sm:text-6xl">
                     Every quiz opens on{" "}
-                    <span className="text-orange-600">schedule</span>, for the{" "}
-                    <span className="text-orange-600">right role</span>.
+                    <span className="text-brand">schedule</span>, for the{" "}
+                    <span className="text-student underline decoration-student/25 decoration-4 underline-offset-8">
+                        right role
+                    </span>
+                    .
                 </h1>
                 <p className="mt-6 max-w-xl text-lg text-muted-foreground">
                     Quizgate is the record system under your assessments: admins build and
@@ -21,20 +27,21 @@ export default function Hero() {
                     isn't an admin's gets turned away before it touches your data.
                 </p>
 
-                <div className="mt-8 flex flex-wrap items-center gap-6">
+                <div className="mt-8 flex flex-wrap items-center gap-3">
                     <Link
                         to="/register"
-                        className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/85 transition-colors"
+                        className="group flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-brand-foreground shadow-md shadow-brand/25 transition-colors hover:bg-brand-hover"
                     >
-                        Start free — no card
-                        <ArrowRight className="size-4" />
+                        Create a quiz, free
+                        <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
                     </Link>
-                    <a
-                        href="#how-it-works"
-                        className="text-sm font-medium text-foreground underline-offset-4 hover:underline"
+                    <Link
+                        to="/login"
+                        className="flex items-center gap-2 rounded-full bg-student-soft px-6 py-3 text-sm font-semibold text-student ring-1 ring-student/10 transition-colors hover:ring-student/30"
                     >
-                        See the gate in action
-                    </a>
+                        <MailOpen className="size-4" />
+                        I have an invite
+                    </Link>
                 </div>
 
                 <p className="mt-6 text-sm text-muted-foreground">
@@ -42,8 +49,9 @@ export default function Hero() {
                 </p>
             </div>
 
-            <div className="flex justify-center lg:justify-end">
+            <div className="relative flex justify-center pb-10 lg:justify-end">
                 <ExamPreviewCard />
+                <InviteChip className="absolute -bottom-1 left-2 sm:left-6 lg:-left-6" />
             </div>
         </section>
     );
