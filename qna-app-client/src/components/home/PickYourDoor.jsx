@@ -40,10 +40,10 @@ function DoorBody({ tone, icon: Icon, eyebrow, title, children }) {
 }
 
 // A door that is one big link: the whole card navigates, the "button" is visual only.
-function LinkDoor({ tone, to, cta, state, events, ...body }) {
+function LinkDoor({ tone, to, linkState, cta, mode, events, ...body }) {
     const t = tones[tone];
     return (
-        <DoorCard as={Link} to={to} tone={tone} state={state} {...events} className={t.focus}>
+        <DoorCard as={Link} to={to} state={linkState} tone={tone} mode={mode} {...events} className={t.focus}>
             <ArrowUpRight className={cn(cornerArrow, t.text)} />
             <DoorBody tone={tone} {...body} />
             <div className="mt-auto pt-6">
@@ -96,14 +96,15 @@ export default function PickYourDoor() {
             <LinkDoor
                 tone="brand"
                 to="/admin-panel/quizzes"
-                cta="Open admin panel"
-                state={stateOf("admin")}
+                linkState={{ openCreate: true }}
+                cta="Create quiz"
+                mode={stateOf("admin")}
                 events={doorEvents("admin")}
                 icon={ClipboardCheck}
                 eyebrow="I run quizzes"
                 title="Publish your next quiz"
             >
-                Build, schedule and publish everything from your admin panel.
+                Start a new quiz right away: set the window, add questions, then publish.
             </LinkDoor>
         ),
         student: (
@@ -115,7 +116,7 @@ export default function PickYourDoor() {
         guest: (
             <DoorCard
                 tone="brand"
-                state={stateOf("admin")}
+                mode={stateOf("admin")}
                 {...doorEvents("admin")}
                 // Clicking anywhere on the door (outside the form) jumps to the email field.
                 onClick={(e) => {
@@ -158,7 +159,7 @@ export default function PickYourDoor() {
                 tone="student"
                 to="/admin-panel/quizzes"
                 cta="Invite students"
-                state={stateOf("student")}
+                mode={stateOf("student")}
                 events={doorEvents("student")}
                 icon={Send}
                 eyebrow="For your students"
@@ -173,7 +174,7 @@ export default function PickYourDoor() {
                 tone="student"
                 to="/dashboard"
                 cta="Go to my quizzes"
-                state={stateOf("student")}
+                mode={stateOf("student")}
                 events={doorEvents("student")}
                 icon={MailOpen}
                 eyebrow="I take quizzes"
@@ -187,7 +188,7 @@ export default function PickYourDoor() {
                 tone="student"
                 to="/login"
                 cta="Sign in to my quizzes"
-                state={stateOf("student")}
+                mode={stateOf("student")}
                 events={doorEvents("student")}
                 icon={MailOpen}
                 eyebrow="I take quizzes"

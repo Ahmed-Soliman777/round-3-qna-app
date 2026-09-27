@@ -14,7 +14,7 @@ const actionsByRole = {
         secondary: { to: "/login", label: "I have an invite", icon: MailOpen },
     },
     admin: {
-        primary: { to: "/admin-panel/quizzes", label: "Open admin panel", className: brandButton },
+        primary: { to: "/admin-panel/quizzes", state: { openCreate: true }, label: "Create quiz", className: brandButton },
         secondary: { to: "/admin-panel/quizzes", label: "Invite students", icon: Send },
     },
     student: {
@@ -58,6 +58,7 @@ export default function Hero() {
                     {primary && (
                         <Link
                             to={primary.to}
+                            state={primary.state}
                             className={cn(
                                 "group flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-colors",
                                 primary.className,
