@@ -94,10 +94,10 @@
     --brand-hover: oklch(0.553 0.195 38.402);
     --brand-foreground: oklch(1 0 0);
     --brand-soft: oklch(0.954 0.038 75.164);
-    /* Student door: violet, the counterpart to the admin orange. */
-    --student: oklch(0.491 0.27 292.581);
+    /* Student door: blue, the complement of the admin orange. */
+    --student: oklch(0.546 0.245 262.881);
     --student-foreground: oklch(1 0 0);
-    --student-soft: oklch(0.943 0.029 294.588);
+    --student-soft: oklch(0.932 0.032 255.585);
 }
 
 .dark {
@@ -136,9 +136,9 @@
     --brand-hover: oklch(0.75 0.183 55.934);
     --brand-foreground: oklch(0.205 0 0);
     --brand-soft: oklch(0.705 0.213 47.604 / 15%);
-    --student: oklch(0.702 0.183 293.541);
+    --student: oklch(0.707 0.165 254.624);
     --student-foreground: oklch(0.205 0 0);
-    --student-soft: oklch(0.606 0.25 292.717 / 18%);
+    --student-soft: oklch(0.623 0.214 259.815 / 18%);
 }
 
 @layer base {
