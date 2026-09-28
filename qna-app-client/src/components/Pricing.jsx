@@ -101,11 +101,12 @@ export default function Pricing() {
                 <div className="mt-8 grid gap-6 text-left lg:grid-cols-3">
                     {plans.map((plan, i) => (
                         <Reveal key={plan.name} delay={i * 100}>
-                            {/* The featured plan has a glowing runner lapping its edge. */}
+                            {/* Only the featured plan moves: a glowing runner lapping its edge and a lift on hover. */}
                             <div
                                 className={cn(
-                                    "h-full rounded-2xl transition duration-300 hover:-translate-y-1 hover:shadow-xl",
-                                    plan.highlighted && "relative p-[2px]"
+                                    "h-full rounded-2xl",
+                                    plan.highlighted &&
+                                        "relative p-[2px] transition duration-300 hover:-translate-y-1 hover:shadow-xl"
                                 )}
                             >
                                 {plan.highlighted && <RunnerBorder />}
@@ -126,7 +127,13 @@ export default function Pricing() {
                                         {plan.name}
                                     </p>
                                     <p className="mt-3 text-4xl font-black tabular-nums">
-                                        <span key={billing} className="inline-block animate-in fade-in slide-in-from-bottom-1 duration-300">
+                                        <span
+                                            key={plan.highlighted ? billing : undefined}
+                                            className={cn(
+                                                "inline-block",
+                                                plan.highlighted && "animate-in fade-in slide-in-from-bottom-1 duration-300"
+                                            )}
+                                        >
                                             {plan.price ? `$${plan.price[billing]}` : "Custom"}
                                         </span>
                                         <span
