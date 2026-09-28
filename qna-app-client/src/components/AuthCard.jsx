@@ -29,8 +29,8 @@ export default function AuthCard({ icon: Icon, title, subtitle, children }) {
     return (
         <div className="min-h-screen bg-background text-foreground">
             <SiteHeader />
-            <main className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center bg-muted/40 px-6 py-12">
-                <div className="w-full max-w-sm rounded-2xl bg-card p-8 shadow-xl ring-1 ring-foreground/10">
+            <main className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center bg-muted/40 px-4 py-8 sm:px-6 sm:py-12">
+                <div className="w-full max-w-sm rounded-2xl bg-card p-6 shadow-xl sm:max-w-md sm:p-8 ring-1 ring-foreground/10">
                     {Icon && (
                         <span className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-orange-100 text-orange-600 dark:bg-orange-500/15 dark:text-orange-400">
                             <Icon className="size-6" />

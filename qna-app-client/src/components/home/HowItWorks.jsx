@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import GateMockup from "./GateMockup";
 import ScheduleMockup from "./ScheduleMockup";
 import BuildMockup from "./BuildMockup";
+import Reveal from "@/components/Reveal";
 
 const steps = [
     {
@@ -62,10 +63,10 @@ export default function HowItWorks() {
                                 "grid items-center gap-12 lg:grid-cols-2",
                             )}
                         >
-                            <div className={cn(i % 2 === 1 && "lg:order-2")}>
+                            <Reveal className={cn(i % 2 === 1 && "lg:order-2")}>
                                 <step.mockup />
-                            </div>
-                            <div className={cn(i % 2 === 1 && "lg:order-1")}>
+                            </Reveal>
+                            <Reveal delay={120} className={cn(i % 2 === 1 && "lg:order-1")}>
                                 <p className="text-sm font-semibold text-orange-600">{step.eyebrow}</p>
                                 <h3 className="mt-2 text-3xl font-bold tracking-tight">{step.title}</h3>
                                 <p className="mt-4 text-muted-foreground">{step.description}</p>
@@ -77,7 +78,7 @@ export default function HowItWorks() {
                                         </li>
                                     ))}
                                 </ul>
-                            </div>
+                            </Reveal>
                         </div>
                     ))}
                 </div>

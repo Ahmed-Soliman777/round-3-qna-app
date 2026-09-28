@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { Link } from "react-router";
 import { cn } from "@/lib/utils";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import InlineCta from "@/components/InlineCta";
+import FilterChips from "@/components/FilterChips";
+import Reveal from "@/components/Reveal";
 
 const badgeStyles = {
     NEW: "bg-green-100 text-green-700",
@@ -46,6 +49,14 @@ const entries = [
 ];
 
 export default function WhatsNewPage() {
+    const [filter, setFilter] = useState("ALL");
+    const visible = entries.filter((e) => filter === "ALL" || e.badge === filter);
+    const options = ["ALL", ...Object.keys(badgeStyles)].map((value) => ({
+        value,
+        label: value === "ALL" ? "All updates" : value.charAt(0) + value.slice(1).toLowerCase(),
+        count: value === "ALL" ? entries.length : entries.filter((e) => e.badge === value).length,
+    }));
+
     return (
         <main className="min-h-screen bg-background text-foreground">
             <SiteHeader />
@@ -62,14 +73,23 @@ export default function WhatsNewPage() {
                     What's new
                 </h1>
 
-                <div className="mt-8 divide-y divide-border">
-                    {entries.map((entry) => (
-                        <div
+                <FilterChips
+                    className="mt-8"
+                    label="Filter updates"
+                    options={options}
+                    value={filter}
+                    onChange={setFilter}
+                />
+
+                <div key={filter} className="mt-8 divide-y divide-border">
+                    {visible.map((entry, i) => (
+                        <Reveal
                             key={entry.version}
-                            className="grid gap-2 py-10 first:pt-0 last:pb-0 sm:grid-cols-[120px_1fr] sm:gap-6"
+                            delay={i * 60}
+                            className="group grid gap-2 py-10 first:pt-0 last:pb-0 sm:grid-cols-[120px_1fr] sm:gap-6"
                         >
                             <div>
-                                <p className="font-bold">{entry.version}</p>
+                                <p className="font-bold transition-colors group-hover:text-orange-600">{entry.version}</p>
                                 <p className="text-sm text-muted-foreground">{entry.date}</p>
                             </div>
                             <div>
@@ -86,7 +106,7 @@ export default function WhatsNewPage() {
                                 </h3>
                                 <p className="mt-3 text-muted-foreground">{entry.description}</p>
                             </div>
-                        </div>
+                        </Reveal>
                     ))}
                 </div>
 

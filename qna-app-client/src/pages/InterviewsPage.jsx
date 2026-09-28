@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Link } from "react-router";
 import {
     ArrowUpRight,
+    ArrowRight,
     CircleDot,
     Diamond,
     Hexagon,
@@ -10,6 +12,9 @@ import {
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import InlineCta from "@/components/InlineCta";
+import FeatureCard from "@/components/FeatureCard";
+import Reveal from "@/components/Reveal";
+import { cn } from "@/lib/utils";
 
 const formats = [
     {
@@ -82,6 +87,9 @@ const included = [
 ];
 
 export default function InterviewsPage() {
+    const [selected, setSelected] = useState(0);
+    const format = formats[selected];
+
     return (
         <main className="min-h-screen bg-background text-foreground">
             <SiteHeader />
@@ -106,41 +114,64 @@ export default function InterviewsPage() {
                 <p className="mt-8 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                     Interview formats
                 </p>
-                <div className="mt-6 grid gap-6 sm:grid-cols-2">
-                    {formats.map((format) => (
-                        <div key={format.title} className="rounded-2xl bg-muted p-8">
-                            <div className="flex items-start justify-between gap-4">
-                                <h3 className="text-xl font-bold tracking-tight">
-                                    {format.title}
-                                </h3>
-                                <span className="shrink-0 rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold text-orange-700">
-                                    {format.duration}
+                <Reveal className="mt-6 grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+                    <div role="tablist" aria-label="Interview formats" className="flex flex-col gap-2">
+                        {formats.map((f, i) => (
+                            <button
+                                key={f.title}
+                                type="button"
+                                role="tab"
+                                aria-selected={i === selected}
+                                onClick={() => setSelected(i)}
+                                className={cn(
+                                    "flex items-center justify-between gap-4 rounded-xl px-5 py-4 text-left transition-all duration-300",
+                                    i === selected
+                                        ? "bg-primary text-primary-foreground shadow-lg"
+                                        : "bg-muted hover:translate-x-1 hover:bg-muted/70"
+                                )}
+                            >
+                                <span className="font-bold tracking-tight">{f.title}</span>
+                                <span
+                                    className={cn(
+                                        "shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold",
+                                        i === selected ? "bg-orange-500 text-white" : "bg-orange-100 text-orange-700"
+                                    )}
+                                >
+                                    {f.duration}
                                 </span>
-                            </div>
-                            <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-green-600">
-                                {format.bestFor}
-                            </p>
-                            <p className="mt-3 text-sm text-muted-foreground">
-                                {format.description}
-                            </p>
-                        </div>
-                    ))}
-                </div>
+                            </button>
+                        ))}
+                    </div>
+
+                    <div
+                        key={format.title}
+                        role="tabpanel"
+                        className="flex flex-col rounded-2xl bg-muted p-8 ring-1 ring-orange-200 animate-in fade-in slide-in-from-right-4 duration-300"
+                    >
+                        <span className="w-fit rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold text-orange-700">
+                            {format.duration}
+                        </span>
+                        <h3 className="mt-4 text-3xl font-black tracking-tight">{format.title}</h3>
+                        <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-green-600">
+                            {format.bestFor}
+                        </p>
+                        <p className="mt-4 flex-1 text-muted-foreground">{format.description}</p>
+                        <Link
+                            to="/register"
+                            className="group mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
+                        >
+                            Try a {format.title.toLowerCase()}
+                            <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                        </Link>
+                    </div>
+                </Reveal>
 
                 <p className="mt-8 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                     What's included
                 </p>
                 <div className="mt-6 grid gap-6 sm:grid-cols-2">
-                    {included.map((feature) => (
-                        <div key={feature.title} className="rounded-2xl bg-muted p-8">
-                            <feature.icon className="size-6 text-orange-500" />
-                            <h3 className="mt-4 text-lg font-bold tracking-tight">
-                                {feature.title}
-                            </h3>
-                            <p className="mt-2 text-sm text-muted-foreground">
-                                {feature.description}
-                            </p>
-                        </div>
+                    {included.map((feature, i) => (
+                        <FeatureCard key={feature.title} {...feature} delay={(i % 2) * 100} />
                     ))}
                 </div>
 

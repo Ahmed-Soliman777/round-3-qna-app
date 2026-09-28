@@ -113,9 +113,9 @@ export function AdminPageHeader({ eyebrow, title, description, actions }) {
   )
 }
 
-export function AdminCard({ className, children }) {
+export function AdminCard({ className, children, ...props }) {
   return (
-    <div className={cn("rounded-2xl bg-card shadow-sm ring-1 ring-foreground/10", className)}>
+    <div className={cn("rounded-2xl bg-card shadow-sm ring-1 ring-foreground/10", className)} {...props}>
       {children}
     </div>
   )

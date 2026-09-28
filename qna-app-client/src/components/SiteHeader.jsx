@@ -230,7 +230,7 @@ function AuthActions() {
             </Link>
             <Link
                 to="/register"
-                className="shrink-0 whitespace-nowrap rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground hover:bg-brand-hover transition-colors"
+                className="shrink-0 whitespace-nowrap rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/85 transition-colors"
             >
                 Start free
             </Link>
@@ -337,7 +337,7 @@ function MobileNav() {
                             <Link
                                 to="/register"
                                 onClick={close}
-                                className="rounded-full bg-brand py-2.5 text-center text-sm font-semibold text-brand-foreground transition-colors hover:bg-brand-hover"
+                                className="rounded-full bg-primary py-2.5 text-center text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/85"
                             >
                                 Start free
                             </Link>

@@ -30,6 +30,7 @@ import {
   scheduleProblems,
 } from "@/lib/quizStatus"
 import { useNow } from "@/hooks/useNow"
+import DateTimePicker from "@/components/DateTimePicker"
 
 // Admin: quiz list + create/edit form. Requires an admin session cookie -
 // a student session gets a 403 from the API.
@@ -179,25 +180,28 @@ function QuizForm({ form, setForm, editingQuiz, saving, error, onCancel, onSubmi
           </div>
           <div>
             <label className="text-sm font-medium" htmlFor="starts_at">Starts at</label>
-            <input
+            <DateTimePicker
               id="starts_at"
-              type="datetime-local"
               required
+              className="mt-1.5"
               value={form.starts_at}
-              onChange={(e) => setForm({ ...form, starts_at: e.target.value })}
-              className={adminInput}
+              rangeStart={form.starts_at}
+              rangeEnd={form.ends_at}
+              onChange={(v) => setForm({ ...form, starts_at: v })}
             />
           </div>
           <div>
             <label className="text-sm font-medium" htmlFor="ends_at">Ends at</label>
-            <input
+            <DateTimePicker
               id="ends_at"
-              type="datetime-local"
               required
+              align="end"
+              className="mt-1.5"
               value={form.ends_at}
               min={form.starts_at || undefined}
-              onChange={(e) => setForm({ ...form, ends_at: e.target.value })}
-              className={adminInput}
+              rangeStart={form.starts_at}
+              rangeEnd={form.ends_at}
+              onChange={(v) => setForm({ ...form, ends_at: v })}
             />
           </div>
         </div>

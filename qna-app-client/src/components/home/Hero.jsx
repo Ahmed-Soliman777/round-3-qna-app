@@ -3,7 +3,6 @@ import { ArrowRight } from "lucide-react";
 import { useRoleActions } from "@/hooks/useRoleActions";
 import { cn } from "@/lib/utils";
 import ExamPreviewCard from "./ExamPreviewCard";
-import InviteChip from "./InviteChip";
 
 const primaryTone = {
     brand: "bg-brand text-brand-foreground shadow-md shadow-brand/25 hover:bg-brand-hover",
@@ -66,9 +65,8 @@ export default function Hero() {
                 </p>
             </div>
 
-            <div className="relative flex justify-center pb-10 lg:justify-end">
+            <div className="relative flex justify-center lg:justify-end">
                 <ExamPreviewCard />
-                <InviteChip className="absolute -bottom-1 left-2 sm:left-6 lg:-left-6" />
             </div>
         </section>
     );
