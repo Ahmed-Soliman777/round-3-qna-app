@@ -6,6 +6,7 @@ import { SplashContext } from './context/splash'
 import HomePage from './pages/HomePage'
 import AssessmentsPage from './pages/AssessmentsPage'
 import InterviewsPage from './pages/InterviewsPage'
+import ContactPage from './pages/ContactPage'
 import WhatsNewPage from './pages/WhatsNewPage'
 import HelpCenterPage from './pages/HelpCenterPage'
 import BlogPage from './pages/BlogPage'
@@ -45,6 +46,8 @@ function App() {
       return
     }
 
+    // A new page starts at the top, not at the previous page's scroll position.
+    window.scrollTo({ top: 0, behavior: "instant" })
     setShowSplash(true)
     setSplashFaded(false)
     const timeout = setTimeout(() => setShowSplash(false), 700)
@@ -58,6 +61,7 @@ function App() {
         <Route path='/' element={<HomePage />} />
         <Route path='/features/assessments' element={<AssessmentsPage />} />
         <Route path='/features/interviews' element={<InterviewsPage />} />
+        <Route path='/contact' element={<ContactPage />} />
         <Route path='/resources/whats-new' element={<WhatsNewPage />} />
         <Route path='/resources/help-center' element={<HelpCenterPage />} />
         <Route path='/resources/blog' element={<BlogPage />} />

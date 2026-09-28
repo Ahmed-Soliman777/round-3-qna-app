@@ -259,6 +259,9 @@ export default function SiteHeader() {
                     <a href="/#pricing" data-nav-item className={navItemClass}>
                         Pricing
                     </a>
+                    <Link to="/contact" data-nav-item className={navItemClass}>
+                        Contact
+                    </Link>
                 </PillNav>
 
                 <div className="flex flex-1 items-center justify-end">

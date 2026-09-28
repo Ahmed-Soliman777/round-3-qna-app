@@ -49,6 +49,7 @@ const plans = [
         ],
         highlighted: false,
         cta: "Contact sales",
+        ctaTo: "/contact?topic=sales",
     },
 ];
 
@@ -156,7 +157,7 @@ export default function Pricing() {
                                     </ul>
 
                                     <Link
-                                        to="/register"
+                                        to={plan.ctaTo ?? "/register"}
                                         className={cn(
                                             "mt-8 rounded-full px-4 py-2.5 text-center text-sm font-semibold transition-colors",
                                             plan.highlighted
