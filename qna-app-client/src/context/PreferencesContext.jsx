@@ -1,13 +1,16 @@
-import { useEffect, useState } from "react"
+import { useLayoutEffect, useState } from "react"
 import { PreferencesContext } from "./preferences"
 
 // Display & accessibility preferences, stored per browser and applied to <html>.
 
 const STORAGE_KEY = "quizgate:preferences"
+// v2 made large text (A+) the default for everyone.
+const VERSION = 2
 
 const defaults = {
+  version: VERSION,
   theme: "light", // "light" | "dark" | "system"
-  textSize: "default", // "small" | "default" | "large"
+  textSize: "large", // "small" | "default" | "large"
   reduceMotion: false,
   highContrast: false,
 }
@@ -17,7 +20,12 @@ const textSizes = { small: "14px", default: "16px", large: "18px" }
 function readStored() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? { ...defaults, ...JSON.parse(raw) } : defaults
+    if (!raw) return defaults
+    const stored = JSON.parse(raw)
+    // Before v2 every visit saved the old "default" size whether or not it was chosen,
+    // so treat it as unset and let the new default apply. A deliberate A- is kept.
+    if ((stored.version ?? 1) < VERSION && stored.textSize === "default") delete stored.textSize
+    return { ...defaults, ...stored, version: VERSION }
   } catch {
     return defaults
   }
@@ -26,7 +34,8 @@ function readStored() {
 export function PreferencesProvider({ children }) {
   const [preferences, setPreferences] = useState(readStored)
 
-  useEffect(() => {
+  // Layout effect so the text size is applied before the first paint, with no jump.
+  useLayoutEffect(() => {
     const root = document.documentElement
     const media = window.matchMedia("(prefers-color-scheme: dark)")
 

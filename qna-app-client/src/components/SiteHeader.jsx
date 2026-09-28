@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import {
     ChevronDown,
     ClipboardCheck,
+    Menu,
+    X,
     LifeBuoy,
     Newspaper,
     Radio,
@@ -89,7 +91,7 @@ function NavDropdownItem({ item, onNavigate }) {
 }
 
 const navItemClass =
-    "relative z-10 flex items-center gap-1 rounded-full px-3.5 py-1.5 text-sm text-muted-foreground outline-none transition-colors duration-200 hover:text-orange-600 focus-visible:text-orange-600";
+    "relative z-10 flex items-center gap-1 whitespace-nowrap rounded-full px-3.5 py-1.5 text-sm text-muted-foreground outline-none transition-colors duration-200 hover:text-orange-600 focus-visible:text-orange-600";
 
 // Desktop nav with a pill that glides to whichever link is hovered or focused.
 // It uses the same orange hover as the dropdown items so the whole menu reads as one surface.
@@ -134,7 +136,7 @@ function PillNav({ children }) {
     return (
         <nav
             ref={navRef}
-            className="relative hidden items-center gap-1 md:flex"
+            className="relative hidden items-center gap-1 lg:flex"
             onMouseOver={(e) => moveTo(e.target)}
             onFocus={(e) => moveTo(e.target)}
             onMouseLeave={hide}
@@ -222,13 +224,13 @@ function AuthActions() {
         <div className="flex items-center gap-4">
             <Link
                 to="/login"
-                className="text-sm font-medium text-foreground hover:text-muted-foreground transition-colors"
+                className="hidden text-sm font-medium text-foreground hover:text-muted-foreground transition-colors sm:inline"
             >
                 Log in
             </Link>
             <Link
                 to="/register"
-                className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground hover:bg-brand-hover transition-colors"
+                className="shrink-0 whitespace-nowrap rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground hover:bg-brand-hover transition-colors"
             >
                 Start free
             </Link>
@@ -236,17 +238,128 @@ function AuthActions() {
     );
 }
 
+const mobileLinks = [
+    { label: "How it works", href: "/#how-it-works" },
+    { label: "Pricing", href: "/#pricing" },
+    { label: "Contact", to: "/contact" },
+];
+
+// Below lg the full nav doesn't fit (especially with large text), so the same links live in a panel.
+function MobileNav() {
+    const { user } = useSession();
+    const { pathname } = useLocation();
+    const [open, setOpen] = useState(false);
+    const [openedOn, setOpenedOn] = useState(pathname);
+    const ref = useRef(null);
+
+    // Close whenever the page changes.
+    if (open && openedOn !== pathname) setOpen(false);
+
+    useEffect(() => {
+        if (!open) return;
+        const onPointer = (event) => {
+            if (!ref.current?.contains(event.target)) setOpen(false);
+        };
+        const onKey = (event) => event.key === "Escape" && setOpen(false);
+        document.addEventListener("mousedown", onPointer);
+        document.addEventListener("keydown", onKey);
+        return () => {
+            document.removeEventListener("mousedown", onPointer);
+            document.removeEventListener("keydown", onKey);
+        };
+    }, [open]);
+
+    const close = () => setOpen(false);
+    const linkClass =
+        "rounded-lg px-3 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-orange-500/10";
+
+    return (
+        <div ref={ref} className="ml-3 lg:hidden">
+            <button
+                type="button"
+                aria-label={open ? "Close menu" : "Open menu"}
+                aria-expanded={open}
+                aria-controls="mobile-nav"
+                onClick={() => {
+                    setOpenedOn(pathname);
+                    setOpen((value) => !value);
+                }}
+                className="flex size-9 items-center justify-center rounded-full text-foreground ring-1 ring-border transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+            >
+                {open ? <X className="size-4" /> : <Menu className="size-4" />}
+            </button>
+
+            <div
+                id="mobile-nav"
+                className={cn(
+                    "absolute inset-x-0 top-full border-b border-border bg-background shadow-lg transition-[opacity,translate,visibility] duration-200 ease-out",
+                    open ? "visible translate-y-0 opacity-100" : "invisible pointer-events-none -translate-y-2 opacity-0"
+                )}
+            >
+                <div className="mx-auto max-h-[calc(100dvh-4rem)] max-w-7xl overflow-y-auto px-6 py-5">
+                    <div className="grid gap-5 sm:grid-cols-2">
+                        {[
+                            ["Features", featuresMenu],
+                            ["Resources", resourcesMenu],
+                        ].map(([title, items]) => (
+                            <div key={title}>
+                                <p className="px-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{title}</p>
+                                <div className="mt-2">
+                                    {items.map((item) => (
+                                        <NavDropdownItem key={item.title} item={item} onNavigate={close} />
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="mt-4 flex flex-col border-t border-border pt-4 sm:flex-row sm:gap-2">
+                        {mobileLinks.map((link) =>
+                            link.to ? (
+                                <Link key={link.label} to={link.to} onClick={close} className={linkClass}>
+                                    {link.label}
+                                </Link>
+                            ) : (
+                                <a key={link.label} href={link.href} onClick={close} className={linkClass}>
+                                    {link.label}
+                                </a>
+                            )
+                        )}
+                    </div>
+                    {!user && (
+                        <div className="mt-4 grid grid-cols-2 gap-3 border-t border-border pt-4 sm:hidden">
+                            <Link
+                                to="/login"
+                                onClick={close}
+                                className="rounded-full py-2.5 text-center text-sm font-semibold ring-1 ring-border transition-colors hover:bg-muted"
+                            >
+                                Log in
+                            </Link>
+                            <Link
+                                to="/register"
+                                onClick={close}
+                                className="rounded-full bg-brand py-2.5 text-center text-sm font-semibold text-brand-foreground transition-colors hover:bg-brand-hover"
+                            >
+                                Start free
+                            </Link>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function SiteHeader() {
     return (
         <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
-            <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
+            <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-6 lg:px-8">
                 {/* Logo and actions share the remaining width equally, keeping the nav centred. */}
                 <div className="flex flex-1 items-center">
                     <Link to="/" className="flex items-center gap-2">
                         <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-lg font-bold text-primary-foreground">
                             Q
                         </span>
-                        <span className="font-heading text-lg font-black tracking-tight">Quizgate</span>
+                        <span className="font-heading text-lg font-black tracking-tight whitespace-nowrap">Quizgate</span>
                     </Link>
                 </div>
 
@@ -266,6 +379,7 @@ export default function SiteHeader() {
 
                 <div className="flex flex-1 items-center justify-end">
                     <AuthActions />
+                    <MobileNav />
                 </div>
             </div>
         </header>
