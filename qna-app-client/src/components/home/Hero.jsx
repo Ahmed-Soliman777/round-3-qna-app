@@ -1,36 +1,18 @@
 import { Link } from "react-router";
-import { ArrowRight, MailOpen, Send } from "lucide-react";
-import { useSession } from "@/context/session";
+import { ArrowRight } from "lucide-react";
+import { useRoleActions } from "@/hooks/useRoleActions";
 import { cn } from "@/lib/utils";
 import ExamPreviewCard from "./ExamPreviewCard";
 import InviteChip from "./InviteChip";
 
-const brandButton = "bg-brand text-brand-foreground shadow-md shadow-brand/25 hover:bg-brand-hover";
-
-// Signed-in visitors get buttons for their own role instead of sign-up and sign-in prompts.
-const actionsByRole = {
-    guest: {
-        primary: { to: "/register", label: "Create a quiz, free", className: brandButton },
-        secondary: { to: "/login", label: "I have an invite", icon: MailOpen },
-    },
-    admin: {
-        primary: { to: "/admin-panel/quizzes", state: { openCreate: true }, label: "Create quiz", className: brandButton },
-        secondary: { to: "/admin-panel/quizzes", label: "Invite students", icon: Send },
-    },
-    student: {
-        primary: {
-            to: "/dashboard",
-            label: "Go to my quizzes",
-            className: "bg-student text-student-foreground shadow-md shadow-student/25 hover:opacity-90",
-        },
-        secondary: null,
-    },
+const primaryTone = {
+    brand: "bg-brand text-brand-foreground shadow-md shadow-brand/25 hover:bg-brand-hover",
+    student: "bg-student text-student-foreground shadow-md shadow-student/25 hover:opacity-90",
 };
 
 // "Two doors": orange speaks to admins, the student token speaks to students.
 export default function Hero() {
-    const { user } = useSession();
-    const { primary, secondary } = actionsByRole[user?.role ?? "guest"];
+    const { primary, secondary } = useRoleActions();
 
     return (
         <section className="mx-auto grid max-w-7xl gap-12 px-6 py-10 lg:grid-cols-2 lg:items-center lg:px-8 lg:py-14">
@@ -61,7 +43,7 @@ export default function Hero() {
                             state={primary.state}
                             className={cn(
                                 "group flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-colors",
-                                primary.className,
+                                primaryTone[primary.tone],
                             )}
                         >
                             {primary.label}
