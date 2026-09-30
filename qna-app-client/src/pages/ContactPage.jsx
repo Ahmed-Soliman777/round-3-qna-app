@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useSearchParams } from "react-router";
-import { ArrowRight, Briefcase, CheckCircle2, GraduationCap, LifeBuoy, Mail, MessageCircle, Receipt } from "lucide-react";
+import { ArrowRight, CheckCircle2, GraduationCap, LifeBuoy, Mail } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import InlineCta from "@/components/InlineCta";
@@ -8,47 +8,11 @@ import FeatureCard from "@/components/FeatureCard";
 import Reveal from "@/components/Reveal";
 import { useSession } from "@/context/session";
 import { validateEmail, validateName } from "@/lib/authValidation";
+import { CONTACT_EMAIL, contactTopics as topics } from "@/lib/contactTopics";
 import { cn } from "@/lib/utils";
 
-const CONTACT_EMAIL = "hello@quizgate.io";
 const MESSAGE_MIN = 10;
 const MESSAGE_MAX = 1000;
-
-const topics = [
-    {
-        id: "sales",
-        icon: Briefcase,
-        title: "Sales & demos",
-        reply: "Reply in 1 business day",
-        description: "Plans for bigger teams, SSO / SAML, SLAs, and a guided walkthrough of Quizgate for your organization.",
-        placeholder: "Tell us about your team and what you'd like to run on Quizgate.",
-    },
-    {
-        id: "support",
-        icon: LifeBuoy,
-        title: "Product support",
-        reply: "Reply in 1 business day",
-        description: "Something not working as expected? Tell us what you were doing and what happened instead.",
-        placeholder: "What were you trying to do, and what happened?",
-        note: "Students: quiz access, deadlines and retakes are set by your instructor, so they can help fastest.",
-    },
-    {
-        id: "billing",
-        icon: Receipt,
-        title: "Billing",
-        reply: "Reply in 2 business days",
-        description: "Invoices, receipts, plan changes, and questions about what you're paying for.",
-        placeholder: "Which plan are you on, and what do you need help with?",
-    },
-    {
-        id: "other",
-        icon: MessageCircle,
-        title: "Something else",
-        reply: "Reply in 2 business days",
-        description: "Partnerships, press, feedback, or anything that doesn't fit the other topics.",
-        placeholder: "What's on your mind?",
-    },
-];
 
 const teamSizes = ["Just me", "2–10", "11–50", "51–200", "200+"];
 
