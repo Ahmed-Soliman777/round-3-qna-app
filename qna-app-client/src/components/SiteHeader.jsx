@@ -7,7 +7,6 @@ import {
     X,
     LifeBuoy,
     Newspaper,
-    Radio,
     Sparkles,
     Star,
 } from "lucide-react";
@@ -22,12 +21,6 @@ const featuresMenu = [
         title: "Assessments",
         description: "Auto-graded skills tests & screening",
         href: "/features/assessments",
-    },
-    {
-        icon: Radio,
-        title: "Interviews",
-        description: "Live & async technical interviews",
-        href: "/features/interviews",
     },
 ];
 
@@ -240,7 +233,6 @@ function AuthActions() {
 
 const mobileLinks = [
     { label: "How it works", href: "/#how-it-works" },
-    { label: "Pricing", href: "/#pricing" },
     { label: "Contact", to: "/contact" },
 ];
 
@@ -368,9 +360,6 @@ export default function SiteHeader() {
                     <NavDropdown label="Resources" items={resourcesMenu} />
                     <a href="/#how-it-works" data-nav-item className={navItemClass}>
                         How it works
-                    </a>
-                    <a href="/#pricing" data-nav-item className={navItemClass}>
-                        Pricing
                     </a>
                     <Link to="/contact" data-nav-item className={navItemClass}>
                         Contact

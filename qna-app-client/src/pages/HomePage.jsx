@@ -3,7 +3,6 @@ import SiteFooter from "@/components/SiteFooter";
 import Hero from "@/components/home/Hero";
 import PickYourDoor from "@/components/home/PickYourDoor";
 import HowItWorks from "@/components/home/HowItWorks";
-import Pricing from "@/components/Pricing";
 
 export default function HomePage() {
     return (
@@ -12,7 +11,6 @@ export default function HomePage() {
             <Hero />
             <PickYourDoor />
             <HowItWorks />
-            <Pricing />
             <SiteFooter />
         </main>
     );

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useSearchParams } from "react-router";
+import { Link, useLocation, useSearchParams } from "react-router";
 import { ArrowRight, Briefcase, CheckCircle2, GraduationCap, LifeBuoy, Mail, MessageCircle, Receipt } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
@@ -120,11 +120,13 @@ function Field({ id, label, optional, error, children }) {
 
 export default function ContactPage() {
     const { user } = useSession();
+    const { state } = useLocation();
     const [searchParams, setSearchParams] = useSearchParams();
     const topic = topics.find((t) => t.id === searchParams.get("topic")) ?? topics[0];
     const [values, setValues] = useState({
         name: user?.name ?? "",
-        email: user?.email ?? "",
+        // The home page's "Contact" door passes along the email typed there.
+        email: user?.email ?? state?.email ?? "",
         organization: "",
         teamSize: "",
         message: "",

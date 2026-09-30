@@ -77,7 +77,7 @@ export default function PickYourDoor() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        navigate("/register", { state: { email: email.trim() } });
+        navigate("/contact", { state: { email: email.trim() } });
     };
 
     // Mouse hover drives the doors; touch gets the press effect instead of a sticky hover.
@@ -145,7 +145,7 @@ export default function PickYourDoor() {
                         type="submit"
                         className="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-5 py-3 text-sm font-semibold text-brand-foreground transition-colors hover:bg-brand-hover sm:py-2.5"
                     >
-                        Start free
+                        Contact
                         <ArrowRight className="size-4 transition-transform duration-300 group-data-[state=active]:translate-x-1" />
                     </button>
                 </form>

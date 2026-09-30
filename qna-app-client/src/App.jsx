@@ -5,7 +5,6 @@ import SplashScreen from './components/SplashScreen'
 import { SplashContext } from './context/splash'
 import HomePage from './pages/HomePage'
 import AssessmentsPage from './pages/AssessmentsPage'
-import InterviewsPage from './pages/InterviewsPage'
 import ContactPage from './pages/ContactPage'
 import WhatsNewPage from './pages/WhatsNewPage'
 import HelpCenterPage from './pages/HelpCenterPage'
@@ -60,7 +59,6 @@ function App() {
       <Routes>
         <Route path='/' element={<HomePage />} />
         <Route path='/features/assessments' element={<AssessmentsPage />} />
-        <Route path='/features/interviews' element={<InterviewsPage />} />
         <Route path='/contact' element={<ContactPage />} />
         <Route path='/resources/whats-new' element={<WhatsNewPage />} />
         <Route path='/resources/help-center' element={<HelpCenterPage />} />

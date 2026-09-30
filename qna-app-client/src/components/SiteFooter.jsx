@@ -7,9 +7,7 @@ const footerColumns = [
         title: "Product",
         links: [
             { label: "Assessments", to: "/features/assessments" },
-            { label: "Interviews", to: "/features/interviews" },
             { label: "How it works", href: "/#how-it-works" },
-            { label: "Pricing", href: "/#pricing" },
         ],
     },
     {
