@@ -36,7 +36,7 @@ export class UserController {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 24 * 60 * 60 * 1000
     });
     return { message: "Welcome back!" };
@@ -53,7 +53,7 @@ export class UserController {
     res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax"
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
     });
     return { message: "Signed out" };
   }
@@ -69,6 +69,8 @@ export class UserController {
   async resendVerification(
     @Body() resendVerificationDto: ResendVerificationDTO
   ) {
-    return await this.userService.resendVerificationEmail(resendVerificationDto.email);
+    return await this.userService.resendVerificationEmail(
+      resendVerificationDto.email
+    );
   }
 }
