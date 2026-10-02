@@ -4,6 +4,7 @@ import { ChevronRight, Clock3 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import QuizProgress from "@/components/QuizProgress";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import { getAttemptResult, submitAttempt } from "@/services/services";
 
 function getBooleanValue(option) {
@@ -34,6 +35,7 @@ export default function QuizSolve() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const submittedRef = useRef(false);
   const pageHeadingRef = useRef(null);
 
@@ -77,6 +79,7 @@ export default function QuizSolve() {
 
   const handleSubmit = async () => {
     if (submitting || submittedRef.current || !attemptId) return;
+    setConfirmOpen(false);
 
     setSubmitting(true);
     setError("");
@@ -146,6 +149,8 @@ export default function QuizSolve() {
   const isLastPage = page === totalPages - 1;
   const unansweredOnPage = pageQuestions.filter((question) => answers[question.id] === undefined).length;
   const isWarning = !isExpired && remainingSeconds <= 120;
+  const answeredCount = questions.filter((question) => answers[question.id] !== undefined).length;
+  const unansweredCount = questions.length - answeredCount;
 
   function goToNextPage() {
     if (isLastPage) return;
@@ -209,7 +214,7 @@ export default function QuizSolve() {
                     aria-pressed={selected}
                     disabled={submitting || isExpired}
                     onClick={() => setAnswers((previous) => ({ ...previous, [q.id]: value }))}
-                    className={`w-full text-left px-4 py-3 rounded-md border text-sm transition-colors ${selected ? "border-blue-500 bg-blue-50 text-blue-700" : "border-gray-200 hover:bg-gray-50"}`}
+                    className={`w-full text-left px-4 py-3 rounded-md border text-sm transition-colors ${selected ? "border-student bg-student-soft text-student" : "border-border hover:bg-muted"}`}
                   >
                     {opt.text ?? opt}
                   </button>
@@ -230,7 +235,7 @@ export default function QuizSolve() {
         {isLastPage ? (
           <Button
             size="lg"
-            onClick={handleSubmit}
+            onClick={() => setConfirmOpen(true)}
             disabled={submitting || isExpired}
             className="w-full bg-green-600 text-white hover:bg-green-700"
           >
@@ -242,6 +247,25 @@ export default function QuizSolve() {
           </Button>
         )}
       </div>
+
+      <ConfirmDialog
+        open={confirmOpen && !isExpired}
+        title="Submit all answers?"
+        confirmLabel="Submit"
+        confirmClassName="bg-green-600 text-white hover:bg-green-700"
+        onConfirm={handleSubmit}
+        onCancel={() => setConfirmOpen(false)}
+      >
+        <p>
+          You answered <strong className="text-foreground">{answeredCount} of {questions.length}</strong> questions.
+          {unansweredCount > 0 && (
+            <span className="text-amber-700">
+              {" "}{unansweredCount} {unansweredCount === 1 ? "is" : "are"} still unanswered.
+            </span>
+          )}
+        </p>
+        <p className="mt-2">Once you submit, you can't change your answers.</p>
+      </ConfirmDialog>
     </div>
   );
 }

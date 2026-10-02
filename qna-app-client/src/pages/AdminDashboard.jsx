@@ -3,27 +3,47 @@ import { Link } from "react-router"
 import { ArrowRight, CircleAlert, CircleCheck, ClipboardList, ListChecks, Plus, Target } from "lucide-react"
 import { getAdminAttempts, getQuizzes } from "@/services/services"
 import { useSession } from "@/context/session"
+import { useSplashDone } from "@/context/splash"
 import { useNow } from "@/hooks/useNow"
 import { getQuizActivation, questionCount } from "@/lib/quizStatus"
 import QuizStatusBadge from "@/components/admin/QuizStatusBadge"
 import { AdminCard, AdminPageHeader, adminPrimaryButton } from "@/components/admin/AdminLayout"
+import RollingNumber from "@/components/RollingNumber"
 
-function StatCard({ icon: Icon, label, value, hint, tone = "orange" }) {
+function StatCard({ icon: Icon, label, value, hint, tone = "orange", delay = 0 }) {
   const tones = {
     orange: "bg-orange-100 text-orange-600 dark:bg-orange-500/15 dark:text-orange-400",
     green: "bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-400",
     red: "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400",
   }
   return (
-    <AdminCard className="p-5">
+    <AdminCard
+      className="p-5 transition duration-300 animate-in fade-in slide-in-from-bottom-2 fill-mode-both hover:-translate-y-0.5 hover:shadow-md"
+      style={{ animationDelay: `${delay}ms` }}
+    >
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium text-muted-foreground">{label}</p>
         <span className={`flex size-9 items-center justify-center rounded-lg ${tones[tone]}`}>
           <Icon className="size-4" />
         </span>
       </div>
-      <p className="mt-3 font-heading text-3xl font-black tracking-tight">{value}</p>
+      <p className="mt-3 font-heading text-3xl font-black tracking-tight">
+        {/\d/.test(String(value)) ? <RollingNumber value={value} delay={delay + 150} /> : value}
+      </p>
       {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
+    </AdminCard>
+  )
+}
+
+function StatCardSkeleton() {
+  return (
+    <AdminCard className="p-5">
+      <div className="flex items-center justify-between">
+        <span className="h-4 w-24 animate-pulse rounded bg-muted" />
+        <span className="size-9 animate-pulse rounded-lg bg-muted" />
+      </div>
+      <span className="mt-4 block h-8 w-16 animate-pulse rounded bg-muted" />
+      <span className="mt-2 block h-3 w-32 animate-pulse rounded bg-muted" />
     </AdminCard>
   )
 }
@@ -31,6 +51,7 @@ function StatCard({ icon: Icon, label, value, hint, tone = "orange" }) {
 export default function AdminDashboard() {
   const { user } = useSession()
   const now = useNow()
+  const splashDone = useSplashDone()
   const [quizzes, setQuizzes] = useState([])
   const [attempts, setAttempts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -82,17 +103,23 @@ export default function AdminDashboard() {
         </p>
       )}
 
-      {loading ? (
-        <p className="text-muted-foreground">Loading dashboard...</p>
+      {/* Keep skeletons up until the splash has faded so the cards' entrance and rolling numbers are seen. */}
+      {loading || !splashDone ? (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" aria-busy="true" aria-label="Loading dashboard">
+          {[0, 1, 2, 3].map((i) => (
+            <StatCardSkeleton key={i} />
+          ))}
+        </div>
       ) : (
         <div className="space-y-8">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard icon={ClipboardList} label="Total quizzes" value={quizzes.length} />
+            <StatCard icon={ClipboardList} label="Total quizzes" value={quizzes.length} delay={0} />
             <StatCard
               icon={CircleCheck}
               tone="green"
               label="Active quizzes"
               value={stats.activeQuizzes.length}
+              delay={100}
               hint="Published, with questions, window open"
             />
             <StatCard
@@ -100,12 +127,14 @@ export default function AdminDashboard() {
               tone="red"
               label="Need questions"
               value={stats.needsQuestions.length}
+              delay={200}
               hint="Can't be published yet"
             />
             <StatCard
               icon={Target}
               label="Average score"
               value={stats.average == null ? "—" : `${stats.average.toFixed(1)}%`}
+              delay={300}
               hint={`${attempts.length} total attempts`}
             />
           </div>

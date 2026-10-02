@@ -2,9 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import { Route, Routes, useLocation } from 'react-router'
 import './App.css'
 import SplashScreen from './components/SplashScreen'
+import { SplashContext } from './context/splash'
 import HomePage from './pages/HomePage'
 import AssessmentsPage from './pages/AssessmentsPage'
-import InterviewsPage from './pages/InterviewsPage'
+import ContactPage from './pages/ContactPage'
 import WhatsNewPage from './pages/WhatsNewPage'
 import HelpCenterPage from './pages/HelpCenterPage'
 import BlogPage from './pages/BlogPage'
@@ -31,7 +32,10 @@ import AdminAttempts from './pages/AdminAttempts'
 function App() {
   const location = useLocation()
   const [showSplash, setShowSplash] = useState(true)
+  const [splashFaded, setSplashFaded] = useState(false)
   const isFirstRun = useRef(true)
+  // "Done" only once the fade-out has finished, so animations start in plain view.
+  const splashDone = splashFaded && !showSplash
 
   useEffect(() => {
     if (isFirstRun.current) {
@@ -42,18 +46,21 @@ function App() {
       return
     }
 
+    // A new page starts at the top, not at the previous page's scroll position.
+    window.scrollTo({ top: 0, behavior: "instant" })
     setShowSplash(true)
+    setSplashFaded(false)
     const timeout = setTimeout(() => setShowSplash(false), 700)
     return () => clearTimeout(timeout)
   }, [location.pathname])
 
   return (
-    <>
-      <SplashScreen visible={showSplash} />
+    <SplashContext.Provider value={splashDone}>
+      <SplashScreen visible={showSplash} onFadeEnd={setSplashFaded} />
       <Routes>
         <Route path='/' element={<HomePage />} />
         <Route path='/features/assessments' element={<AssessmentsPage />} />
-        <Route path='/features/interviews' element={<InterviewsPage />} />
+        <Route path='/contact' element={<ContactPage />} />
         <Route path='/resources/whats-new' element={<WhatsNewPage />} />
         <Route path='/resources/help-center' element={<HelpCenterPage />} />
         <Route path='/resources/blog' element={<BlogPage />} />
@@ -80,7 +87,7 @@ function App() {
           <Route path="/quiz/:id/result" element={<QuizResult />} />
         </Route>
       </Routes>
-    </>
+    </SplashContext.Provider>
   )
 }
 

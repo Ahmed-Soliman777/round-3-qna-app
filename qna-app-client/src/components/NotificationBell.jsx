@@ -137,7 +137,7 @@ export default function NotificationBell() {
         aria-controls={open ? panelId : undefined}
         aria-label={unread ? `Notifications, ${unread} unread` : "Notifications"}
         className={cn(
-          "relative flex size-9 items-center justify-center rounded-full text-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500",
+          "relative flex size-9 items-center justify-center rounded-full text-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-student",
           open && "bg-muted"
         )}
       >
@@ -177,7 +177,7 @@ export default function NotificationBell() {
               <button
                 type="button"
                 onClick={handleMarkAllRead}
-                className="flex items-center gap-1 text-xs font-semibold text-orange-600 hover:underline"
+                className="flex items-center gap-1 text-xs font-semibold text-student hover:underline"
               >
                 <CheckCheck className="size-3.5" /> Mark all as read
               </button>
@@ -208,10 +208,10 @@ export default function NotificationBell() {
                       onClick={() => handleOpenNotification(notification)}
                       className={cn(
                         "flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none",
-                        !notification.read && "bg-orange-50/60 dark:bg-orange-500/5"
+                        !notification.read && "bg-student-soft/50"
                       )}
                     >
-                      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-600 dark:bg-orange-500/15 dark:text-orange-400">
+                      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-student-soft text-student">
                         <Mail className="size-4" />
                       </span>
                       <span className="min-w-0 flex-1">

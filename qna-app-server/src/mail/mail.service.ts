@@ -49,6 +49,15 @@ export class MailService {
   constructor(private mailerService: MailerService) {}
 
   async sendGenericEmail(to: string, subject: string, html: string) {
+    // Local dev escape hatch: print the email (and its links) instead of
+    // sending it, so flows can be tested without a working SMTP quota.
+    if (process.env.MAIL_DEV_LOG === "true") {
+      const links = [...html.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
+      this.logger.log(
+        `[MAIL_DEV_LOG] "${subject}" to ${to}\n${links.join("\n") || "(no links)"}`
+      );
+      return;
+    }
     try {
       await this.mailerService.sendMail({
         to,

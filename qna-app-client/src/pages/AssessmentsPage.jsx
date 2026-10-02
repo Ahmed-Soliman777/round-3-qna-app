@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router";
 import {
     ArrowUpRight,
@@ -10,6 +11,10 @@ import {
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import InlineCta from "@/components/InlineCta";
+import CountUp from "@/components/CountUp";
+import FeatureCard from "@/components/FeatureCard";
+import Reveal from "@/components/Reveal";
+import { cn } from "@/lib/utils";
 
 const stats = [
     { value: "40+", label: "Supported languages" },
@@ -91,6 +96,8 @@ const flow = [
 ];
 
 export default function AssessmentsPage() {
+    const [activeStep, setActiveStep] = useState(0);
+
     return (
         <main className="min-h-screen bg-background text-foreground">
             <SiteHeader />
@@ -114,9 +121,9 @@ export default function AssessmentsPage() {
 
                 <div className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-border sm:grid-cols-4">
                     {stats.map((stat) => (
-                        <div key={stat.label} className="bg-muted px-6 py-8 text-center">
+                        <div key={stat.label} className="bg-muted px-6 py-8 text-center transition-colors hover:bg-background">
                             <p className="text-3xl font-black text-orange-600 sm:text-4xl">
-                                {stat.value}
+                                <CountUp value={stat.value} />
                             </p>
                             <p className="mt-2 text-sm text-muted-foreground">{stat.label}</p>
                         </div>
@@ -124,39 +131,95 @@ export default function AssessmentsPage() {
                 </div>
 
                 <div className="mt-8 grid gap-6 sm:grid-cols-2">
-                    {features.map((feature) => (
-                        <div key={feature.title} className="rounded-2xl bg-muted p-8">
-                            <feature.icon className="size-6 text-orange-500" />
-                            <h3 className="mt-4 text-lg font-bold tracking-tight">
-                                {feature.title}
-                            </h3>
-                            <p className="mt-2 text-sm text-muted-foreground">
-                                {feature.description}
-                            </p>
-                        </div>
+                    {features.map((feature, i) => (
+                        <FeatureCard key={feature.title} {...feature} delay={(i % 2) * 100} />
                     ))}
                 </div>
 
-                <div className="mt-8 rounded-2xl bg-muted p-10">
-                    <h2 className="text-3xl font-black tracking-tight">
-                        How an assessment flows
-                    </h2>
-                    <div className="mt-6 divide-y divide-border">
-                        {flow.map((item) => (
-                            <div key={item.step} className="flex gap-6 py-5 first:pt-0 last:pb-0">
-                                <span className="shrink-0 text-sm font-black text-orange-600">
-                                    {item.step}
-                                </span>
-                                <div>
-                                    <h3 className="font-semibold">{item.title}</h3>
-                                    <p className="mt-1 text-sm text-muted-foreground">
-                                        {item.description}
-                                    </p>
-                                </div>
-                            </div>
-                        ))}
+                <Reveal className="mt-8 rounded-2xl bg-muted p-6 sm:p-10">
+                    <div className="flex flex-wrap items-end justify-between gap-4">
+                        <h2 className="text-3xl font-black tracking-tight">
+                            How an assessment flows
+                        </h2>
+                        <p className="text-sm text-muted-foreground">
+                            Step {activeStep + 1} of {flow.length}
+                        </p>
                     </div>
-                </div>
+
+                    <div className="mt-6 h-1.5 overflow-hidden rounded-full bg-border">
+                        <div
+                            className="h-full rounded-full bg-orange-500 transition-all duration-500"
+                            style={{ width: `${((activeStep + 1) / flow.length) * 100}%` }}
+                        />
+                    </div>
+
+                    <ol className="mt-6 space-y-2">
+                        {flow.map((item, i) => {
+                            const isActive = i === activeStep;
+                            const isDone = i < activeStep;
+                            return (
+                                <li key={item.step}>
+                                    <button
+                                        type="button"
+                                        onClick={() => setActiveStep(i)}
+                                        aria-expanded={isActive}
+                                        className={cn(
+                                            "flex w-full gap-5 rounded-xl p-4 text-left transition-all duration-300",
+                                            isActive ? "bg-background shadow-sm ring-1 ring-orange-200" : "hover:bg-background/60"
+                                        )}
+                                    >
+                                        <span
+                                            className={cn(
+                                                "flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-black transition-colors",
+                                                isActive
+                                                    ? "bg-orange-500 text-white"
+                                                    : isDone
+                                                        ? "bg-orange-100 text-orange-700"
+                                                        : "bg-background text-muted-foreground ring-1 ring-border"
+                                            )}
+                                        >
+                                            {item.step}
+                                        </span>
+                                        <div className="min-w-0">
+                                            <h3 className={cn("pt-1 font-semibold", !isActive && "text-muted-foreground")}>
+                                                {item.title}
+                                            </h3>
+                                            <div
+                                                className={cn(
+                                                    "grid transition-all duration-300",
+                                                    isActive ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                                                )}
+                                            >
+                                                <p className="overflow-hidden text-sm text-muted-foreground">
+                                                    <span className="block pt-1">{item.description}</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </button>
+                                </li>
+                            );
+                        })}
+                    </ol>
+
+                    <div className="mt-6 flex justify-between gap-3">
+                        <button
+                            type="button"
+                            onClick={() => setActiveStep((s) => Math.max(0, s - 1))}
+                            disabled={activeStep === 0}
+                            className="rounded-full px-4 py-2 text-sm font-semibold ring-1 ring-border transition hover:bg-background disabled:opacity-40"
+                        >
+                            ← Previous
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setActiveStep((s) => Math.min(flow.length - 1, s + 1))}
+                            disabled={activeStep === flow.length - 1}
+                            className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-primary/85 disabled:opacity-40"
+                        >
+                            Next step →
+                        </button>
+                    </div>
+                </Reveal>
 
                 <div className="mt-8">
                     <InlineCta

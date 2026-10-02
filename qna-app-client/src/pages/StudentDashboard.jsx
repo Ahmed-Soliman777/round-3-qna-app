@@ -30,7 +30,7 @@ export default function StudentDashboard() {
       <SiteHeader />
       <main className="min-h-[calc(100vh-4rem)] bg-muted/40">
         <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
-          <p className="text-sm font-semibold uppercase tracking-wide text-orange-600">Dashboard</p>
+          <p className="text-sm font-semibold uppercase tracking-wide text-student">Dashboard</p>
           <h1 className="mt-1 mb-1 text-3xl font-black tracking-tight">
             {firstName ? `Hi ${firstName}, here are your quizzes` : "Your Quizzes"}
           </h1>

@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { Link } from "react-router";
-import { Clock } from "lucide-react";
+import { Clock, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import FilterChips from "@/components/FilterChips";
+import Reveal from "@/components/Reveal";
 
 const featured = {
     image: "https://picsum.photos/seed/quizgate-scantron/900/900",
@@ -67,6 +70,17 @@ function CategoryBadge({ children, className }) {
 }
 
 export default function BlogPage() {
+    const [category, setCategory] = useState("All");
+    const [query, setQuery] = useState("");
+
+    const categories = ["All", ...new Set(posts.map((p) => p.category))];
+    const q = query.trim().toLowerCase();
+    const visible = posts.filter(
+        (p) =>
+            (category === "All" || p.category === category) &&
+            (!q || p.title.toLowerCase().includes(q) || p.description.toLowerCase().includes(q))
+    );
+
     return (
         <main className="min-h-screen bg-background text-foreground">
             <SiteHeader />
@@ -83,12 +97,14 @@ export default function BlogPage() {
                     Blog
                 </h1>
 
-                <div className="mt-8 grid overflow-hidden rounded-2xl bg-muted sm:grid-cols-2">
-                    <img
-                        src={featured.image}
-                        alt={featured.title}
-                        className="h-64 w-full object-cover sm:h-full"
-                    />
+                <Reveal className="group mt-8 grid cursor-pointer overflow-hidden rounded-2xl bg-muted transition-shadow duration-300 hover:shadow-xl sm:grid-cols-2">
+                    <div className="overflow-hidden">
+                        <img
+                            src={featured.image}
+                            alt={featured.title}
+                            className="h-64 w-full object-cover transition-transform duration-700 group-hover:scale-105 sm:h-full"
+                        />
+                    </div>
                     <div className="p-8 sm:p-10">
                         <div className="flex items-center gap-3">
                             <CategoryBadge>{featured.category}</CategoryBadge>
@@ -102,28 +118,50 @@ export default function BlogPage() {
                             <span className="flex items-center gap-1.5 text-muted-foreground">
                                 <Clock className="size-4" /> {featured.readTime}
                             </span>
-                            <span className="font-semibold text-orange-600">Read article →</span>
+                            <span className="font-semibold text-orange-600 transition-transform group-hover:translate-x-1">Read article →</span>
                         </div>
+                    </div>
+                </Reveal>
+
+                <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <FilterChips
+                        label="Filter by category"
+                        options={categories}
+                        value={category}
+                        onChange={setCategory}
+                    />
+                    <div className="relative sm:w-64">
+                        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                        <input
+                            type="search"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            placeholder="Search articles"
+                            aria-label="Search articles"
+                            className="w-full rounded-full bg-muted py-2 pl-9 pr-4 text-sm outline-none ring-1 ring-transparent transition focus:bg-background focus:ring-2 focus:ring-orange-500"
+                        />
                     </div>
                 </div>
 
-                <div className="mt-8 grid gap-8 sm:grid-cols-2">
-                    {posts.map((post) => (
-                        <div
+                <div className="mt-6 grid gap-8 sm:grid-cols-2">
+                    {visible.map((post) => (
+                        <article
                             key={post.title}
-                            className="overflow-hidden rounded-2xl bg-muted"
+                            className="group cursor-pointer overflow-hidden rounded-2xl bg-muted transition duration-300 animate-in fade-in hover:-translate-y-1 hover:shadow-xl"
                         >
-                            <img
-                                src={post.image}
-                                alt={post.title}
-                                className="h-48 w-full object-cover"
-                            />
+                            <div className="overflow-hidden">
+                                <img
+                                    src={post.image}
+                                    alt={post.title}
+                                    className="h-48 w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                />
+                            </div>
                             <div className="p-6">
                                 <div className="flex items-center gap-3">
                                     <CategoryBadge>{post.category}</CategoryBadge>
                                     <span className="text-sm text-muted-foreground">{post.date}</span>
                                 </div>
-                                <h3 className="mt-3 text-xl font-bold tracking-tight">
+                                <h3 className="mt-3 text-xl font-bold tracking-tight transition-colors group-hover:text-orange-600">
                                     {post.title}
                                 </h3>
                                 <p className="mt-2 text-sm text-muted-foreground">
@@ -133,12 +171,17 @@ export default function BlogPage() {
                                     <span className="flex items-center gap-1.5 text-muted-foreground">
                                         <Clock className="size-4" /> {post.readTime}
                                     </span>
-                                    <span className="font-semibold text-orange-600">Read →</span>
+                                    <span className="font-semibold text-orange-600 transition-transform group-hover:translate-x-1">Read →</span>
                                 </div>
                             </div>
-                        </div>
+                        </article>
                     ))}
                 </div>
+                {visible.length === 0 && (
+                    <p className="py-12 text-center text-muted-foreground animate-in fade-in">
+                        No articles match. Try a different category or search term.
+                    </p>
+                )}
             </div>
 
             <SiteFooter />

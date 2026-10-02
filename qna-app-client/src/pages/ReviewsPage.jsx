@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { Link } from "react-router";
 import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import CountUp from "@/components/CountUp";
+import Reveal from "@/components/Reveal";
 
 const breakdown = [
     { stars: 5, percent: 83 },
@@ -86,6 +89,9 @@ function StarRow({ rating, size = "size-4" }) {
 }
 
 export default function ReviewsPage() {
+    const [starFilter, setStarFilter] = useState(null);
+    const visible = reviews.filter((r) => starFilter === null || r.rating === starFilter);
+
     return (
         <main className="min-h-screen bg-background text-foreground">
             <SiteHeader />
@@ -104,29 +110,48 @@ export default function ReviewsPage() {
 
                 <div className="mt-8 flex flex-col divide-y divide-border rounded-2xl bg-muted sm:flex-row sm:divide-x sm:divide-y-0">
                     <div className="flex flex-col items-center justify-center gap-2 p-10 text-center">
-                        <p className="text-5xl font-black">4.8</p>
+                        <p className="text-5xl font-black"><CountUp value="4.8" /></p>
                         <StarRow rating={5} size="size-5" />
                         <p className="text-sm text-muted-foreground">out of 5</p>
                     </div>
 
-                    <div className="flex-1 space-y-2 p-10">
+                    <Reveal className="group/bars flex-1 space-y-1 p-10">
                         {breakdown.map((row) => (
-                            <div key={row.stars} className="flex items-center gap-3">
+                            <button
+                                key={row.stars}
+                                type="button"
+                                disabled={row.percent === 0}
+                                aria-pressed={starFilter === row.stars}
+                                onClick={() => setStarFilter(starFilter === row.stars ? null : row.stars)}
+                                className={cn(
+                                    "flex w-full items-center gap-3 rounded-lg px-2 py-1 transition-colors enabled:hover:bg-background disabled:cursor-default",
+                                    starFilter === row.stars && "bg-background ring-1 ring-orange-300"
+                                )}
+                            >
                                 <span className="w-6 shrink-0 text-sm text-muted-foreground">
                                     {row.stars}★
                                 </span>
                                 <div className="h-2 flex-1 overflow-hidden rounded-full bg-border">
                                     <div
-                                        className="h-full rounded-full bg-orange-500"
-                                        style={{ width: `${row.percent}%` }}
+                                        className="h-full w-(--bar) origin-left scale-x-0 rounded-full bg-orange-500 transition-transform duration-1000 ease-out group-data-[shown]/bars:scale-x-100"
+                                        style={{ "--bar": `${row.percent}%` }}
                                     />
                                 </div>
                                 <span className="w-10 shrink-0 text-right text-sm text-muted-foreground">
                                     {row.percent}%
                                 </span>
-                            </div>
+                            </button>
                         ))}
-                    </div>
+                        <p className="px-2 pt-2 text-xs text-muted-foreground">
+                            {starFilter ? (
+                                <button type="button" onClick={() => setStarFilter(null)} className="font-medium text-orange-600 hover:underline">
+                                    Showing {starFilter}★ reviews — clear filter
+                                </button>
+                            ) : (
+                                "Click a row to filter reviews"
+                            )}
+                        </p>
+                    </Reveal>
 
                     <div className="flex flex-col items-center justify-center gap-1 p-10 text-center">
                         <p className="text-4xl font-black">6+</p>
@@ -135,8 +160,12 @@ export default function ReviewsPage() {
                 </div>
 
                 <div className="mt-8 grid gap-6 sm:grid-cols-2">
-                    {reviews.map((review) => (
-                        <div key={review.name} className="rounded-2xl bg-muted p-8">
+                    {visible.map((review, i) => (
+                        <Reveal
+                            key={review.name}
+                            delay={(i % 2) * 100}
+                            className="rounded-2xl bg-muted p-8 ring-1 ring-transparent hover:bg-background hover:shadow-lg hover:ring-orange-200"
+                        >
                             <StarRow rating={review.rating} />
                             <p className="mt-4 text-foreground">"{review.quote}"</p>
                             <div className="mt-6 flex items-center gap-3 border-t border-border pt-6">
@@ -153,7 +182,7 @@ export default function ReviewsPage() {
                                     <p className="text-sm text-muted-foreground">{review.role}</p>
                                 </div>
                             </div>
-                        </div>
+                        </Reveal>
                     ))}
                 </div>
             </div>
